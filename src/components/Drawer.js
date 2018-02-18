@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import TouchableItem from 'react-navigation/lib-rn/views/TouchableItem'
+import TouchableItem from 'react-navigation/src/views/TouchableItem'
 import { DrawerItems, SafeAreaView } from 'react-navigation'
 
 import { resetTo } from '../navigators/navigationActions'

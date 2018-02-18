@@ -14,6 +14,8 @@ import {
   Platform
 } from 'react-native'
 
+// import { default as Web3 } from 'web3'
+
 import { resetTo } from '../navigators/navigationActions'
 
 const deveryscreen = require("./../images/img/deveryscreen-svg.png");

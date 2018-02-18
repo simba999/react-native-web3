@@ -6,7 +6,7 @@ Basic implementation of screens from set-1 of [invisionpp DO UI kit](https://www
 Currently focused on getting the UI to look the same first. So most things should look ok but are not really functional.
 
 ## Prerequisites
-* Node
+* Node (version 8.0.0 later)
 * yarn
 * android emulator or device with expo (24 or later)
 
