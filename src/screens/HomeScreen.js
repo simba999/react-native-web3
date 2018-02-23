@@ -18,7 +18,7 @@ import { resetTo } from '../navigators/navigationActions'
 const deveryscreen = require("./../images/img/deveryscreen-svg.png");
 const checkbox = require("./../images/img/checkbox.png"); 
 const originImage = require("./../images/img/origin.png"); 
-const rect = require("./../images/img/rect.png"); 
+const rect = require("./../images/img/rect.png");
 
 const styles = StyleSheet.create({
   imageContainer: {
@@ -32,11 +32,9 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   logo: {
-    // position: "absolute",
     left: Platform.OS === "android" ? 75 : 50,
     right: Platform.OS === "android" ? 40 : 50,
-    top: Platform.OS === "android" ? 35 : 60,
-    // alignItem: 'center',
+    top: Platform.OS === "android" ? 35 : 30,
     opacity: 0.3,
     width: 200,
     height: 50
@@ -146,6 +144,10 @@ class LoginScreen extends React.Component {
     this.state = {
       tokenInput: ''
     }
+  }
+
+  componentDidMount() {
+    console.log(this.props)
   }
 
   toLoginScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'LoginScreen' }))
