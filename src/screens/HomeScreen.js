@@ -20,6 +20,76 @@ const checkbox = require("./../images/img/checkbox.png");
 const originImage = require("./../images/img/origin.png"); 
 const rect = require("./../images/img/rect.png");
 
+
+class LoginScreen extends React.Component {
+
+  constructor() {
+    super();
+
+    this.state = {
+      tokenInput: ''
+    }
+  }
+
+  componentDidMount() {
+    console.log('home: ', this.state)
+  }
+
+  toLoginScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'LoginScreen' }))
+  
+  render () {
+    return (
+      <View style={styles.imageContainer}>
+        <View style={styles.logoContainer}>
+          <ImageBackground source={deveryscreen} style={styles.logo} />
+        </View>
+        <View style={styles.box}>
+          <View style={styles.item}>
+            <Text style={styles.mText}>This item is:</Text>
+            <View style={styles.flexImage}>
+              <Image
+                style={styles.image}
+                source={checkbox} />
+              <Text h3 style={styles.lText}>
+                Unknown
+              </Text>
+            </View>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.mText}>Origin</Text>
+            <View style={styles.flexImage}>
+              <Image
+                style={styles.imageOrigin}
+                source={originImage} />
+              <Text style={styles.xlText}>
+                Unknown
+              </Text>
+            </View>
+          </View>
+          <View style={styles.item2}>
+            <Text style={styles.sText}>Tracker</Text>
+              <Image
+                  style={styles.imageCenter}
+                  source={rect} />
+            <Text style={styles.sText}>No Tracker Information</Text>
+          </View>
+        </View>
+        <View style={styles.footer}>
+          <View style={{marginLeft: 20, marginRight: 20}}>
+            <Button
+              block
+              color="#00d8aa"
+              onPress={() => this.toLoginScreen()}
+              title="Verify"
+            >
+            </Button>
+          </View>
+        </View>
+      </View>
+    )
+  }
+}
+
 const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
@@ -134,75 +204,5 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   }
 });
-
-
-class LoginScreen extends React.Component {
-
-  constructor() {
-    super();
-
-    this.state = {
-      tokenInput: ''
-    }
-  }
-
-  componentDidMount() {
-    console.log(this.props)
-  }
-
-  toLoginScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'LoginScreen' }))
-  
-  render () {
-    return (
-      <View style={styles.imageContainer}>
-        <View style={styles.logoContainer}>
-          <ImageBackground source={deveryscreen} style={styles.logo} />
-        </View>
-        <View style={styles.box}>
-          <View style={styles.item}>
-            <Text style={styles.mText}>This item is:</Text>
-            <View style={styles.flexImage}>
-              <Image
-                style={styles.image}
-                source={checkbox} />
-              <Text h3 style={styles.lText}>
-                Unknown
-              </Text>
-            </View>
-          </View>
-          <View style={styles.item}>
-            <Text style={styles.mText}>Origin</Text>
-            <View style={styles.flexImage}>
-              <Image
-                style={styles.imageOrigin}
-                source={originImage} />
-              <Text style={styles.xlText}>
-                Unknown
-              </Text>
-            </View>
-          </View>
-          <View style={styles.item2}>
-            <Text style={styles.sText}>Tracker</Text>
-              <Image
-                  style={styles.imageCenter}
-                  source={rect} />
-            <Text style={styles.sText}>No Tracker Information</Text>
-          </View>
-        </View>
-        <View style={styles.footer}>
-          <View style={{marginLeft: 20, marginRight: 20}}>
-            <Button
-              block
-              color="#00d8aa"
-              onPress={() => this.toLoginScreen()}
-              title="Verify"
-            >
-            </Button>
-          </View>
-        </View>
-      </View>
-    )
-  }
-}
 
 export default LoginScreen
