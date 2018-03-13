@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { BarCodeScanner, Permissions } from 'expo';
-import { resetTo } from '../navigators/navigationActions'
+import { resetTo, navigate } from '../navigators/navigationActions'
 
 export default class QRScreen extends Component {
   state = {
@@ -23,7 +23,10 @@ export default class QRScreen extends Component {
     this._requestCameraPermission();
   }
 
-  toHomeScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'MainDrawer' }))
+  toHomeScreen = (address) => {
+    console.log('##: ', address)
+    this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: address} }))
+  }
 
   _requestCameraPermission = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
@@ -42,7 +45,6 @@ export default class QRScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-
         {this.state.hasCameraPermission === null
           ? <Text>Requesting for camera permission</Text>
           : this.state.hasCameraPermission === false
@@ -71,7 +73,7 @@ export default class QRScreen extends Component {
       [
         {
           text: 'Yes',
-          onPress: () => this.toHomeScreen(),
+          onPress: () => this.toHomeScreen(this.state.lastScannedUrl),
         },
         { text: 'No', onPress: () => {} },
       ],
