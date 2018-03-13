@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: "absolute",
-    left: Platform.OS === "android" ? 100 : 50,
+    left: Platform.OS === "android" ? 100 : 90,
     top: Platform.OS === "android" ? 35 : 60,
     width: 150,
     height: 40,

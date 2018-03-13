@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: "absolute",
-    left: Platform.OS === "android" ? 100 : 50,
-    top: Platform.OS === "android" ? 35 : 60,
+    left: Platform.OS === "android" ? 100 : 90,
+    top: Platform.OS === "android" ? 35 : 40,
     width: 150,
     height: 40,
     opacity: 0.3
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   box: {
     borderWidth: 1,
     borderColor: '#ffffff',
-    flex: 4,
+    flex: 3,
     backgroundColor: '#ffffff',
     marginLeft: 20,
     marginRight: 20,
