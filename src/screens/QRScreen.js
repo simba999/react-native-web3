@@ -10,6 +10,8 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+
+import Web3 from 'web3';
 import { BarCodeScanner, Permissions } from 'expo';
 import { resetTo, navigate } from '../navigators/navigationActions'
 
@@ -19,13 +21,21 @@ export default class QRScreen extends Component {
     lastScannedUrl: null,
   };
 
+  constructor() {
+    super()
+
+    this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
+  }
+
   componentDidMount() {
     this._requestCameraPermission();
   }
 
   toHomeScreen = (address) => {
-    console.log('##: ', address)
-    this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: address} }))
+    if (this.web3.isAddress(address)) {
+      this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: address} }))  
+    }
+    
   }
 
   _requestCameraPermission = async () => {
@@ -38,6 +48,7 @@ export default class QRScreen extends Component {
   _handleBarCodeRead = result => {
     if (result.data !== this.state.lastScannedUrl) {
       LayoutAnimation.spring();
+      console.log('*************************', typeof result.data)
       this.setState({ lastScannedUrl: result.data });
     }
   };
@@ -67,18 +78,35 @@ export default class QRScreen extends Component {
   }
 
   _handlePressUrl = () => {
-    Alert.alert(
-      'Open this URL?',
-      this.state.lastScannedUrl,
-      [
-        {
-          text: 'Yes',
-          onPress: () => this.toHomeScreen(this.state.lastScannedUrl),
-        },
-        { text: 'No', onPress: () => {} },
-      ],
-      { cancellable: false }
-    );
+    console.log(':::::', this.state.lastScannedUrl)
+    if (this.web3.isAddress(this.state.lastScannedUrl)) {
+      Alert.alert(
+        'Are you sure?',
+        this.state.lastScannedUrl,
+        [
+          {
+            text: 'Yes',
+            onPress: () => this.toHomeScreen(this.state.lastScannedUrl)
+          },
+          { text: 'No', onPress: () => {} },
+        ],
+        { cancellable: false }
+      );
+    } else {
+      let msg = 'Please, enter contract address'
+      Alert.alert(
+        'This Contract is invalid.',
+        msg,
+        [
+          {
+            text: 'Ok',
+            onPress: () => {}
+          }
+        ],
+        { cancellable: false }
+      );
+    }
+
   };
 
   _handlePressCancel = () => {
@@ -141,4 +169,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
     fontSize: 18,
   },
+  centerBtn: {
+    alignItems: 'center'
+  }
 });

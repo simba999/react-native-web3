@@ -11,9 +11,11 @@ import {
   Button,
   Image,
   TextInput,
-  Platform
+  Platform,
+  Alert
 } from 'react-native'
 
+import Web3 from 'web3'
 import { resetTo, setParamsAction, navigate } from '../navigators/navigationActions'
 import 'babel-preset-react-native-web3/globals';
 
@@ -29,6 +31,8 @@ class LoginScreen extends React.Component {
     this.state = {
       tokenInput: ''
     }
+
+    this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
   }
 
   componentDidMount() {
@@ -37,8 +41,25 @@ class LoginScreen extends React.Component {
     // let contract = this.web3.eth.contract(abiArray).at('0x654f4a3e3B7573D6b4bB7201AB70d718961765CD')
   }
 
-  toHomeScreen = (address) => {
-    this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: address} }))
+  toHomeScreen = () => {
+    if (this.web3.isAddress(this.state.tokenInput)) {
+      this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: this.state.tokenInput} }))  
+    } else {
+      let msg = 'address is not correct'
+      if (this.state.tokenInput == '') msg = 'Please, enter contract address'
+      Alert.alert(
+        'This Contract is invalid.',
+        msg,
+        [
+          {
+            text: 'Ok',
+            onPress: () => {},
+            style: 'cancelBtn'
+          }
+        ],
+        { cancellable: false }
+      );
+    }
   }
   toQRScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'QRScreen' }))
   changeToken = (text) => this.setState({tokenInput: text})
@@ -58,12 +79,13 @@ class LoginScreen extends React.Component {
               placeholder=""
               underlineColorAndroid="transparent"
               onChangeText={(text) => this.changeToken(text)}
-              value={this.state.tokenInput} 
+              value={this.state.tokenInput}
+              numberOfLine={5}
             />
             
             <View style={{marginLeft: 30, marginRight: 30}}>
               <Button
-                onPress={() => this.toHomeScreen(this.state.tokenInput)}
+                onPress={() => this.toHomeScreen()}
                 color="#00d8aa"
                 title="Verify"
               >
@@ -90,7 +112,9 @@ const styles = StyleSheet.create({
     flex: 1,
     width: null,
     height: null,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   logoContainer: {
     flex: 1,
@@ -98,9 +122,9 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   logo: {
-    position: "absolute",
-    left: Platform.OS === "android" ? 100 : 90,
-    top: Platform.OS === "android" ? 35 : 60,
+    position: "relative",
+    // left: Platform.OS === "android" ? 100 : 90,
+    top: Platform.OS === "android" ? 55 : 60,
     width: 150,
     height: 40,
     opacity: 0.3
@@ -153,6 +177,10 @@ const styles = StyleSheet.create({
   qrBtn: {
     marginTop: 45,
     paddingTop: 15
+  },
+  cancelBtn: {
+    textAlign: 'center',
+    justifyContent: 'center'
   }
 
 });
