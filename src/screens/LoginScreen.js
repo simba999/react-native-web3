@@ -47,16 +47,20 @@ class LoginScreen extends React.Component {
     return (
         <ImageBackground style={styles.imageContainer}>
           <View style={styles.logoContainer}>
-            <ImageBackground source={deveryscreen} style={styles.logo} />
+            <Image source={deveryscreen} style={styles.logo} />
           </View>
           <View style={styles.footer}>
+            
             <Text h3 style={{ color: '#1b2979', textAlign: 'center', fontSize: 24 }}>Enter the code to check for authenticity!</Text>
+            
             <TextInput
               style={ styles.inputBox }
               placeholder=""
               underlineColorAndroid="transparent"
               onChangeText={(text) => this.changeToken(text)}
-              value={this.state.tokenInput} />
+              value={this.state.tokenInput} 
+            />
+            
             <View style={{marginLeft: 30, marginRight: 30}}>
               <Button
                 onPress={() => this.toHomeScreen(this.state.tokenInput)}
@@ -64,7 +68,9 @@ class LoginScreen extends React.Component {
                 title="Verify"
               >
               </Button>
-              <Text style={styles.footerText} >Enter 0xc72DEa9c19D6a056B57eaA0B70Bc5e8d2c7FF148 to demo the product check. This demo serves as a proof of concept is not connected to the blockchain.</Text>
+
+              <Text style={styles.footerText} > Or scan the QR code to verify the item. </Text>
+              
               <Button
                   onPress={() => this.toQRScreen()}
                   color="#00d8aa"
@@ -93,10 +99,10 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: "absolute",
-    left: Platform.OS === "android" ? 75 : 50,
+    left: Platform.OS === "android" ? 100 : 50,
     top: Platform.OS === "android" ? 35 : 60,
-    width: 200,
-    height: 50,
+    width: 150,
+    height: 40,
     opacity: 0.3
   },
   text: {
@@ -126,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 2,
     flexDirection: 'column',
     width: '100%',
-    marginTop: 50
+    marginTop: -50
   },
   footerText: {
     marginTop: 10,

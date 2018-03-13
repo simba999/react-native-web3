@@ -114,12 +114,12 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   logo: {
-    left: Platform.OS === "android" ? 75 : 50,
-    right: Platform.OS === "android" ? 40 : 50,
-    top: Platform.OS === "android" ? 35 : 30,
-    opacity: 0.3,
-    width: 200,
-    height: 50
+    position: "absolute",
+    left: Platform.OS === "android" ? 100 : 50,
+    top: Platform.OS === "android" ? 35 : 60,
+    width: 150,
+    height: 40,
+    opacity: 0.3
   },
   text: {
     color: "#D8D8D8",
@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     marginBottom: 10,
-    borderRadius: 6,
+    marginTop: -50,
+    borderRadius: 10,
     shadowColor: '#1b29790d',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
