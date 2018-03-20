@@ -8,8 +8,8 @@ export const resetTo = ({ routeName, params, action }) =>
 	    ],
 	})
 
-export const setParamsAction = (token) => NavigationActions.setParams({
-  params: { token: token },
+export const setParamsAction = (token, logoImage) => NavigationActions.setParams({
+  params: { token: token, logoImage: logoImage },
   key: 'tokenVal',
 });
 
