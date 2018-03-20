@@ -26,6 +26,7 @@ import 'babel-preset-react-native-web3/globals';
 
 const deveryscreen = require("./../images/img/deveryscreen-svg.png");
 const loading = require("./../images/img/loading.gif");
+const uploadImageIcon = require("./../images/img/upload-icon.jpg");
 
 
 class LoginScreen extends React.Component {
@@ -35,7 +36,8 @@ class LoginScreen extends React.Component {
 
     this.state = {
       tokenInput: '',
-      isLoaded: true
+      isLoaded: false,
+      image: ''
     }
 
     this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
@@ -43,7 +45,10 @@ class LoginScreen extends React.Component {
 
   toHomeScreen = () => {
     if (this.web3.isAddress(this.state.tokenInput)) {
-      this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: this.state.tokenInput} }))  
+      this.props.navigation.dispatch(navigate({ 
+        routeName: 'MainDrawer', 
+        params: {token: this.state.tokenInput, logoImage: this.state.image} 
+      }))  
     } else {
       let msg = 'address is not correct'
       if (this.state.tokenInput == '') msg = 'Please, enter contract address'
@@ -62,7 +67,13 @@ class LoginScreen extends React.Component {
     }
   }
 
-  toQRScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'QRScreen' }))
+  toQRScreen = () => {
+    console.log('to QR code: ', this.state)
+    this.props.navigation.dispatch(navigate({ 
+      routeName: 'QRScreen',
+      params: {logoImage: this.state.image}
+    }))
+  }
   changeToken = (text) => this.setState({tokenInput: text})
   // pick image from phone
   _pickImage = async () => {
@@ -74,40 +85,52 @@ class LoginScreen extends React.Component {
     this._handleImagePicked(pickerResult);
   };
 
+  // save image uri in login component and home component
   _handleImagePicked = async pickerResult => {
-      try {
-        this.setState({ isLoaded: true });
+    try {
+      this.setState({ isLoaded: true });
 
-        if (!pickerResult.cancelled) {
-          console.log('******* uri *********', pickerResult.uri)
-          this.setState({ image: pickerResult.uri });
-        }
-      } catch (e) {
-        console.log({ e });
-        alert('Upload failed, sorry :(');
-      } finally {
-        this.setState({ isLoaded: false });
+      if (!pickerResult.cancelled) {
+        this.setState({ image: pickerResult.uri });
       }
-    };
+    } catch (e) {
+      alert('Upload failed, sorry :(');
+      this.setState({ isLoaded: false });
+    } finally {
+    }
+  };
   
   render () {
+    let logoImage = [];
+
+    if (this.state.image != '') {
+      logoImage.push(
+        <Image source={{ uri: this.state.image }}  style={styles.logo} key="imageLogo" />
+      )
+    } 
+    // else {
+    //   logoImage.push(
+    //     <Image source={{ uri: this.state.image }}  style={styles.logo} key="imageLogo" />
+    //   )
+    // }
+
     return (
         <ImageBackground style={styles.imageContainer}>
           <View style={styles.logoContainer}>
             { 
               this.state.isLoaded
-                ? <Image source={deveryscreen} style={styles.logo} />
+                ? logoImage
                 : null
             }
           </View>
-          <View style={styles.uploadContainer}>
-            <Button
-              style={styles.uploadIcon}
-              title="upload image"
-              onPress={this._pickImage}
-              >
-            </Button>
-          </View>
+          <TouchableOpacity 
+            style={styles.uploadContainer}
+            onPress={this._pickImage}>
+            <Image 
+              source={uploadImageIcon} 
+              style={styles.uploadIcon} />
+          </TouchableOpacity>
+          
           <View style={styles.footer}>
             
             <Text h3 style={{ color: '#1b2979', textAlign: 'center', fontSize: 24 }}>Enter the code to check for authenticity!</Text>
@@ -221,18 +244,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   uploadIcon: {
-    borderRadius: 50,
-    height: 50,
-    width: 50,
+    // borderRadius: 50,
+    height: 40,
+    width: 40,
     position: "relative",
-    right: Platform.OS === "android" ? 10 : 20,
-    top: Platform.OS === "android" ? 25 : 20,
-    alignItems: 'flex-end'
+    alignItems: 'center',
+    overflow: 'visible'
   },
   uploadContainer: {
     position: "absolute",
-    top: 20,
-    right: 20
+    top: Platform.OS === "android" ? 30 : 30,
+    right: Platform.OS === "android" ? 20 : 20,
+    backgroundColor: 'white'
   }
 
 });

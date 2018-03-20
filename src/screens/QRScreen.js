@@ -19,6 +19,7 @@ export default class QRScreen extends Component {
   state = {
     hasCameraPermission: null,
     lastScannedUrl: null,
+    logoImage: ''
   };
 
   constructor() {
@@ -29,11 +30,24 @@ export default class QRScreen extends Component {
 
   componentDidMount() {
     this._requestCameraPermission();
+    debugger
+    if (this.props.navigation.state.params) {
+      if (this.props.navigation.state.params.logoImage) {
+        this.setState({ logoImage: this.props.navigation.state.params.logoImage })  
+      }
+    }
+    console.log('QR code component: ', this.props.navigation.state.params)
   }
 
   toHomeScreen = (address) => {
     if (this.web3.isAddress(address)) {
-      this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: address} }))  
+      this.props.navigation.dispatch(navigate({ 
+        routeName: 'MainDrawer', 
+        params: {
+          token: address,
+          logoImage: this.state.logoImage
+        } 
+      }))  
     }
     
   }
