@@ -9,6 +9,8 @@ import {
   StatusBar,
   StyleSheet,
   TouchableOpacity,
+  Button,
+  Platform
 } from 'react-native';
 
 import Web3 from 'web3';
@@ -30,15 +32,15 @@ export default class QRScreen extends Component {
 
   componentDidMount() {
     this._requestCameraPermission();
-    debugger
+
     if (this.props.navigation.state.params) {
       if (this.props.navigation.state.params.logoImage) {
         this.setState({ logoImage: this.props.navigation.state.params.logoImage })  
       }
     }
-    console.log('QR code component: ', this.props.navigation.state.params)
   }
 
+  // go to Home page
   toHomeScreen = (address) => {
     if (this.web3.isAddress(address)) {
       this.props.navigation.dispatch(navigate({ 
@@ -49,9 +51,13 @@ export default class QRScreen extends Component {
         } 
       }))  
     }
-    
   }
 
+
+  // go to Login page
+  goBack = () => { this.props.navigation.dispatch(navigate({ routeName: 'LoginScreen' } ))}
+
+  // give "Granted" permisson to camera
   _requestCameraPermission = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({
@@ -59,6 +65,7 @@ export default class QRScreen extends Component {
     });
   };
 
+  // read code from QR scanner
   _handleBarCodeRead = result => {
     if (result.data !== this.state.lastScannedUrl) {
       LayoutAnimation.spring();
@@ -69,6 +76,13 @@ export default class QRScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Button 
+            title="back"
+            style={styles.backButton}
+            onPress={this.goBack} />
+        </View>
+        <StatusBar hidden />
         {this.state.hasCameraPermission === null
           ? <Text>Requesting for camera permission</Text>
           : this.state.hasCameraPermission === false
@@ -84,12 +98,11 @@ export default class QRScreen extends Component {
                 />}
 
         {this._maybeRenderUrl()}
-
-        <StatusBar hidden />
       </View>
     );
   }
 
+  // go to Home page
   _handlePressUrl = () => {
     if (this.web3.isAddress(this.state.lastScannedUrl)) {
       Alert.alert(
@@ -183,5 +196,16 @@ const styles = StyleSheet.create({
   },
   centerBtn: {
     alignItems: 'center'
+  },
+  headerContainer: {
+    flex: 1,
+    padding: Platform.OS === "android" ? 35 : 30,
+    flexDirection: "row",
+    top: Platform.OS === "android" ? 30 : 30,
+    left: 0, 
+    right: 0
+  },
+  backButton: {
+
   }
 });
