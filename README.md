@@ -1,4 +1,4 @@
-# do-one
+# devery app
 
 A personal project for learning react-native and react-navigation. Built with CRNA.
 Basic implementation of screens from set-1 of [invisionpp DO UI kit](https://www.invisionapp.com/do).

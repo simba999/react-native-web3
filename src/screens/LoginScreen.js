@@ -11,22 +11,148 @@ import {
   Button,
   Image,
   TextInput,
-  Platform
+  Platform,
+  Alert,
+  ActivityIndicator,
+  Clipboard,
+  Share,
+  StatusBar
 } from 'react-native'
 
-// import { default as Web3 } from 'web3'
-
-import { resetTo } from '../navigators/navigationActions'
+import Exponent, { Constants, ImagePicker, registerRootComponent } from 'expo';
+import Web3 from 'web3'
+import { resetTo, setParamsAction, navigate } from '../navigators/navigationActions'
+import 'babel-preset-react-native-web3/globals';
 
 const deveryscreen = require("./../images/img/deveryscreen-svg.png");
 const loading = require("./../images/img/loading.gif");
+
+
+class LoginScreen extends React.Component {
+
+  constructor() {
+    super();
+
+    this.state = {
+      tokenInput: '',
+      isLoaded: true
+    }
+
+    this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
+  }
+
+  toHomeScreen = () => {
+    if (this.web3.isAddress(this.state.tokenInput)) {
+      this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: this.state.tokenInput} }))  
+    } else {
+      let msg = 'address is not correct'
+      if (this.state.tokenInput == '') msg = 'Please, enter contract address'
+      Alert.alert(
+        'This Contract is invalid.',
+        msg,
+        [
+          {
+            text: 'Ok',
+            onPress: () => {},
+            style: 'cancelBtn'
+          }
+        ],
+        { cancellable: false }
+      );
+    }
+  }
+
+  toQRScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'QRScreen' }))
+  changeToken = (text) => this.setState({tokenInput: text})
+  // pick image from phone
+  _pickImage = async () => {
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+
+    this._handleImagePicked(pickerResult);
+  };
+
+  _handleImagePicked = async pickerResult => {
+      try {
+        this.setState({ isLoaded: true });
+
+        if (!pickerResult.cancelled) {
+          console.log('******* uri *********', pickerResult.uri)
+          this.setState({ image: pickerResult.uri });
+        }
+      } catch (e) {
+        console.log({ e });
+        alert('Upload failed, sorry :(');
+      } finally {
+        this.setState({ isLoaded: false });
+      }
+    };
+  
+  render () {
+    return (
+        <ImageBackground style={styles.imageContainer}>
+          <View style={styles.logoContainer}>
+            { 
+              this.state.isLoaded
+                ? <Image source={deveryscreen} style={styles.logo} />
+                : null
+            }
+          </View>
+          <View style={styles.uploadContainer}>
+            <Button
+              style={styles.uploadIcon}
+              title="upload image"
+              onPress={this._pickImage}
+              >
+            </Button>
+          </View>
+          <View style={styles.footer}>
+            
+            <Text h3 style={{ color: '#1b2979', textAlign: 'center', fontSize: 24 }}>Enter the code to check for authenticity!</Text>
+            
+            <TextInput
+              style={ styles.inputBox }
+              placeholder=""
+              underlineColorAndroid="transparent"
+              onChangeText={(text) => this.changeToken(text)}
+              value={this.state.tokenInput}
+              numberOfLine={5}
+            />
+            
+            <View style={{marginLeft: 30, marginRight: 30}}>
+              <Button
+                onPress={() => this.toHomeScreen()}
+                color="#00d8aa"
+                title="Verify"
+              >
+              </Button>
+
+              <Text style={styles.footerText} > Or scan the QR code to verify the item. </Text>
+              
+              <Button
+                  onPress={() => this.toQRScreen()}
+                  color="#00d8aa"
+                  title="QR scanner"
+                  style={styles.qrBtn}
+                >
+                </Button>              
+            </View>
+          </View>
+        </ImageBackground>
+    )
+  }
+}
 
 const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     width: null,
     height: null,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   logoContainer: {
     flex: 1,
@@ -34,11 +160,11 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   logo: {
-    position: "absolute",
-    left: Platform.OS === "android" ? 75 : 50,
-    top: Platform.OS === "android" ? 35 : 60,
-    width: 200,
-    height: 50,
+    position: "relative",
+    // left: Platform.OS === "android" ? 100 : 90,
+    top: Platform.OS === "android" ? 55 : 60,
+    width: 150,
+    height: 40,
     opacity: 0.3
   },
   text: {
@@ -65,12 +191,14 @@ const styles = StyleSheet.create({
     marginRight: 20
   },
   footer: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'column',
-    width: '100%'
+    width: '100%',
+    marginTop: -50
   },
   footerText: {
-    marginTop: 10, 
+    marginTop: 10,
+    marginBottom: 10,
     color: '#1b2979', 
     textAlign: 'center', 
     fontSize: 12,
@@ -83,51 +211,30 @@ const styles = StyleSheet.create({
   loading: {
     width: 60,
     height: 60
+  },
+  qrBtn: {
+    marginTop: 45,
+    paddingTop: 15
+  },
+  cancelBtn: {
+    textAlign: 'center',
+    justifyContent: 'center'
+  },
+  uploadIcon: {
+    borderRadius: 50,
+    height: 50,
+    width: 50,
+    position: "relative",
+    right: Platform.OS === "android" ? 10 : 20,
+    top: Platform.OS === "android" ? 25 : 20,
+    alignItems: 'flex-end'
+  },
+  uploadContainer: {
+    position: "absolute",
+    top: 20,
+    right: 20
   }
 
 });
-
-class LoginScreen extends React.Component {
-
-  constructor() {
-    super();
-
-    this.state = {
-      tokenInput: ''
-    }
-  }
-
-  toHomeScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'MainDrawer' }))
-  changeToken = (e) => this.setState({tokenInput: e.target.value})
-  
-  render () {
-    return (
-        <ImageBackground style={styles.imageContainer}>
-          <View style={styles.logoContainer}>
-            <ImageBackground source={deveryscreen} style={styles.logo} />
-          </View>
-          <View style={styles.footer}>
-            <Text h3 style={{ color: '#1b2979', textAlign: 'center', fontSize: 24 }}>Enter the code to check for authenticity!</Text>
-            <TextInput
-              style={ styles.inputBox }
-              placeholder=""
-              underlineColorAndroid="transparent"
-              onChange={(e) => this.changeToken(e)}
-              value={this.state.tokenInput} />
-            <View style={{marginLeft: 30, marginRight: 30}}>
-              <Button
-                block
-                onPress={() => this.toHomeScreen()}
-                color="#00d8aa"
-                title="Verify"
-              >
-              </Button>
-            </View>
-            <Text style={styles.footerText} >Enter 0xc72DEa9c19D6a056B57eaA0B70Bc5e8d2c7FF148 to demo the product check. This demo serves as a proof of concept is not connected to the blockchain.</Text>
-          </View>
-        </ImageBackground>
-    )
-  }
-}
 
 export default LoginScreen
