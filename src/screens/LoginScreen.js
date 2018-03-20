@@ -12,9 +12,14 @@ import {
   Image,
   TextInput,
   Platform,
-  Alert
+  Alert,
+  ActivityIndicator,
+  Clipboard,
+  Share,
+  StatusBar
 } from 'react-native'
 
+import Exponent, { Constants, ImagePicker, registerRootComponent } from 'expo';
 import Web3 from 'web3'
 import { resetTo, setParamsAction, navigate } from '../navigators/navigationActions'
 import 'babel-preset-react-native-web3/globals';
@@ -29,16 +34,11 @@ class LoginScreen extends React.Component {
     super();
 
     this.state = {
-      tokenInput: ''
+      tokenInput: '',
+      isLoaded: true
     }
 
     this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
-  }
-
-  componentDidMount() {
-    // let abiArray = [{"constant":true,"inputs":[{"name":"item","type":"address"}],"name":"addressHash","outputs":[{"name":"hash","type":"bytes32"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"brandAccounts","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"productAccount","type":"address"},{"name":"description","type":"string"},{"name":"details","type":"string"},{"name":"year","type":"uint256"},{"name":"origin","type":"string"},{"name":"active","type":"bool"}],"name":"updateProduct","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"productAccountsLength","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"marker","type":"address"},{"name":"permission","type":"bool"}],"name":"permissionMarker","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"apps","outputs":[{"name":"appAccount","type":"address"},{"name":"appName","type":"string"},{"name":"feeAccount","type":"address"},{"name":"active","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"removeAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"isAdmin","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"productAccounts","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"brandAccount","type":"address"}],"name":"getBrandData","outputs":[{"name":"appAccount","type":"address"},{"name":"appFeeAccount","type":"address"},{"name":"active","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"brandAccount","type":"address"}],"name":"getBrand","outputs":[{"components":[{"name":"brandAccount","type":"address"},{"name":"appAccount","type":"address"},{"name":"brandName","type":"string"},{"name":"active","type":"bool"}],"name":"brand","type":"tuple"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"admins","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"appAccountsLength","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"brandAccount","type":"address"},{"name":"brandName","type":"string"},{"name":"active","type":"bool"}],"name":"updateBrand","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"appAccounts","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"brands","outputs":[{"name":"brandAccount","type":"address"},{"name":"appAccount","type":"address"},{"name":"brandName","type":"string"},{"name":"active","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"appAccount","type":"address"}],"name":"getAppData","outputs":[{"name":"feeAccount","type":"address"},{"name":"active","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"appName","type":"string"},{"name":"feeAccount","type":"address"}],"name":"addApp","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"addAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"brandAccount","type":"address"},{"name":"brandName","type":"string"}],"name":"addBrand","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"products","outputs":[{"name":"productAccount","type":"address"},{"name":"brandAccount","type":"address"},{"name":"description","type":"string"},{"name":"details","type":"string"},{"name":"year","type":"uint256"},{"name":"origin","type":"string"},{"name":"active","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"acceptOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"appName","type":"string"},{"name":"feeAccount","type":"address"},{"name":"active","type":"bool"}],"name":"updateApp","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"productAccount","type":"address"},{"name":"itemHash","type":"bytes32"}],"name":"mark","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"item","type":"address"}],"name":"check","outputs":[{"name":"productAccount","type":"address"},{"name":"brandAccount","type":"address"},{"name":"appAccount","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"productAccount","type":"address"}],"name":"getProductData","outputs":[{"name":"brandAccount","type":"address"},{"name":"appAccount","type":"address"},{"name":"appFeeAccount","type":"address"},{"name":"active","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"newOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"productAccount","type":"address"}],"name":"getProduct","outputs":[{"components":[{"name":"productAccount","type":"address"},{"name":"brandAccount","type":"address"},{"name":"description","type":"string"},{"name":"details","type":"string"},{"name":"year","type":"uint256"},{"name":"origin","type":"string"},{"name":"active","type":"bool"}],"name":"product","type":"tuple"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"appAccount","type":"address"}],"name":"getApp","outputs":[{"components":[{"name":"appAccount","type":"address"},{"name":"appName","type":"string"},{"name":"feeAccount","type":"address"},{"name":"active","type":"bool"}],"name":"app","type":"tuple"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"brandAccountsLength","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"productAccount","type":"address"},{"name":"description","type":"string"},{"name":"details","type":"string"},{"name":"year","type":"uint256"},{"name":"origin","type":"string"}],"name":"addProduct","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"appAccount","type":"address"},{"indexed":false,"name":"appName","type":"string"},{"indexed":false,"name":"feeAccount","type":"address"},{"indexed":false,"name":"active","type":"bool"}],"name":"AppAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"appAccount","type":"address"},{"indexed":false,"name":"appName","type":"string"},{"indexed":false,"name":"feeAccount","type":"address"},{"indexed":false,"name":"active","type":"bool"}],"name":"AppUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"brandAccount","type":"address"},{"indexed":true,"name":"appAccount","type":"address"},{"indexed":false,"name":"brandName","type":"string"},{"indexed":false,"name":"active","type":"bool"}],"name":"BrandAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"brandAccount","type":"address"},{"indexed":true,"name":"appAccount","type":"address"},{"indexed":false,"name":"brandName","type":"string"},{"indexed":false,"name":"active","type":"bool"}],"name":"BrandUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"productAccount","type":"address"},{"indexed":true,"name":"brandAccount","type":"address"},{"indexed":true,"name":"appAccount","type":"address"},{"indexed":false,"name":"description","type":"string"},{"indexed":false,"name":"active","type":"bool"}],"name":"ProductAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"productAccount","type":"address"},{"indexed":true,"name":"brandAccount","type":"address"},{"indexed":true,"name":"appAccount","type":"address"},{"indexed":false,"name":"description","type":"string"},{"indexed":false,"name":"active","type":"bool"}],"name":"ProductUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"marker","type":"address"},{"indexed":true,"name":"brandAccount","type":"address"},{"indexed":false,"name":"permission","type":"bool"}],"name":"Permissioned","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"marker","type":"address"},{"indexed":true,"name":"productAccount","type":"address"},{"indexed":false,"name":"itemHash","type":"bytes32"}],"name":"Marked","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"addr","type":"address"}],"name":"AdminAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"addr","type":"address"}],"name":"AdminRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"}],"name":"OwnershipTransferred","type":"event"}]
-
-    // let contract = this.web3.eth.contract(abiArray).at('0x654f4a3e3B7573D6b4bB7201AB70d718961765CD')
   }
 
   toHomeScreen = () => {
@@ -61,14 +61,52 @@ class LoginScreen extends React.Component {
       );
     }
   }
+
   toQRScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'QRScreen' }))
   changeToken = (text) => this.setState({tokenInput: text})
+  // pick image from phone
+  _pickImage = async () => {
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+
+    this._handleImagePicked(pickerResult);
+  };
+
+  _handleImagePicked = async pickerResult => {
+      try {
+        this.setState({ isLoaded: true });
+
+        if (!pickerResult.cancelled) {
+          console.log('******* uri *********', pickerResult.uri)
+          this.setState({ image: pickerResult.uri });
+        }
+      } catch (e) {
+        console.log({ e });
+        alert('Upload failed, sorry :(');
+      } finally {
+        this.setState({ isLoaded: false });
+      }
+    };
   
   render () {
     return (
         <ImageBackground style={styles.imageContainer}>
           <View style={styles.logoContainer}>
-            <Image source={deveryscreen} style={styles.logo} />
+            { 
+              this.state.isLoaded
+                ? <Image source={deveryscreen} style={styles.logo} />
+                : null
+            }
+          </View>
+          <View style={styles.uploadContainer}>
+            <Button
+              style={styles.uploadIcon}
+              title="upload image"
+              onPress={this._pickImage}
+              >
+            </Button>
           </View>
           <View style={styles.footer}>
             
@@ -181,6 +219,20 @@ const styles = StyleSheet.create({
   cancelBtn: {
     textAlign: 'center',
     justifyContent: 'center'
+  },
+  uploadIcon: {
+    borderRadius: 50,
+    height: 50,
+    width: 50,
+    position: "relative",
+    right: Platform.OS === "android" ? 10 : 20,
+    top: Platform.OS === "android" ? 25 : 20,
+    alignItems: 'flex-end'
+  },
+  uploadContainer: {
+    position: "absolute",
+    top: 20,
+    right: 20
   }
 
 });

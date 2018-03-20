@@ -48,7 +48,6 @@ export default class QRScreen extends Component {
   _handleBarCodeRead = result => {
     if (result.data !== this.state.lastScannedUrl) {
       LayoutAnimation.spring();
-      console.log('*************************', typeof result.data)
       this.setState({ lastScannedUrl: result.data });
     }
   };
@@ -78,7 +77,6 @@ export default class QRScreen extends Component {
   }
 
   _handlePressUrl = () => {
-    console.log(':::::', this.state.lastScannedUrl)
     if (this.web3.isAddress(this.state.lastScannedUrl)) {
       Alert.alert(
         'Are you sure?',
