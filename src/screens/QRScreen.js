@@ -74,12 +74,6 @@ export default class QRScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Button 
-            title="back"
-            style={styles.backButton}
-            onPress={this.goBack} />
-        </View>
         <StatusBar hidden />
         {
           this.state.hasCameraPermission === null
@@ -135,16 +129,5 @@ const styles = StyleSheet.create({
   },
   centerBtn: {
     alignItems: 'center'
-  },
-  headerContainer: {
-    flex: 1,
-    padding: Platform.OS === "android" ? 35 : 30,
-    flexDirection: "row",
-    top: Platform.OS === "android" ? 30 : 30,
-    left: 0, 
-    right: 0
-  },
-  backButton: {
-
   }
 });
