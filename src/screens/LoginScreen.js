@@ -101,7 +101,7 @@ class LoginScreen extends React.Component {
     // if loaded too quickly.
     setTimeout(() => {
       this.setState(() => ({ isLoaded: true }))
-    }, 3000)
+    }, 5000)
   }
   
   render () {
