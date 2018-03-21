@@ -81,84 +81,24 @@ export default class QRScreen extends Component {
             onPress={this.goBack} />
         </View>
         <StatusBar hidden />
-        {this.state.hasCameraPermission === null
-          ? <Text>Requesting for camera permission</Text>
-          : this.state.hasCameraPermission === false
-              ? <Text style={{ color: '#fff' }}>
-                  Camera permission is not granted
-                </Text>
-              : <BarCodeScanner
-                  onBarCodeRead={this._handleBarCodeRead}
-                  style={{
-                    height: Dimensions.get('window').height,
-                    width: Dimensions.get('window').width,
-                  }}
-                />}
-
-        {/* this._maybeRenderUrl() */}
+        {
+          this.state.hasCameraPermission === null
+            ? <Text>Requesting for camera permission</Text>
+            : this.state.hasCameraPermission === false
+                ? <Text style={{ color: '#fff' }}>
+                    Camera permission is not granted
+                  </Text>
+                : <BarCodeScanner
+                    onBarCodeRead={this._handleBarCodeRead}
+                    style={{
+                      height: Dimensions.get('window').height,
+                      width: Dimensions.get('window').width,
+                    }}
+                  />
+        }
       </View>
     );
   }
-
-  // route navigate to Home page
-  // _handlePressUrl = () => {
-  //   if (this.web3.isAddress(this.state.lastScannedUrl)) {
-    //   Alert.alert(
-    //     'Are you sure?',
-    //     this.state.lastScannedUrl,
-    //     [
-    //       {
-    //         text: 'Yes',
-    //         onPress: () => this.toHomeScreen(this.state.lastScannedUrl)
-    //       },
-    //       { text: 'No', onPress: () => {} },
-    //     ],
-    //     { cancellable: false }
-    //   );
-    // } else {
-    //   let msg = 'Please, enter contract address'
-    //   Alert.alert(
-    //     'This Contract is invalid.',
-    //     msg,
-    //     [
-    //       {
-    //         text: 'Ok',
-    //         onPress: () => {}
-    //       }
-    //     ],
-    //     { cancellable: false }
-    //   );
-    // }
-  // };
-
-  // action after user click cancel button in bottom
-  _handlePressCancel = () => {
-    this.setState({ lastScannedUrl: null });
-  };
-
-  // show box in bottom after recognizing the QR code
-  // _maybeRenderUrl = () => {
-  //   if (!this.state.lastScannedUrl) {
-  //     return;
-  //   }
-
-  //   // return (
-  //   //   <View style={styles.bottomBar}>
-  //   //     <TouchableOpacity style={styles.url} onPress={this._handlePressUrl}>
-  //   //       <Text numberOfLines={1} style={styles.urlText}>
-  //   //         {this.state.lastScannedUrl}
-  //   //       </Text>
-  //   //     </TouchableOpacity>
-  //   //     <TouchableOpacity
-  //   //       style={styles.cancelButton}
-  //   //       onPress={this._handlePressCancel}>
-  //   //       <Text style={styles.cancelButtonText}>
-  //   //         Cancel
-  //   //       </Text>
-  //   //     </TouchableOpacity>
-  //   //   </View>
-  //   // );
-  // };
 }
 
 const styles = StyleSheet.create({
