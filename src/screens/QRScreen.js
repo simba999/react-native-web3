@@ -45,10 +45,6 @@ export default class QRScreen extends Component {
     }
   }
 
-
-  // route navigate to Login page
-  goBack = () => { this.props.navigation.dispatch(navigate({ routeName: 'LoginScreen' } ))}
-
   // give "Granted" permisson to camera
   _requestCameraPermission = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
