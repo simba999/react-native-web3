@@ -20,8 +20,7 @@ import { resetTo, navigate } from '../navigators/navigationActions'
 export default class QRScreen extends Component {
   state = {
     hasCameraPermission: null,
-    lastScannedUrl: null,
-    logoImage: ''
+    lastScannedUrl: null
   };
 
   constructor() {
@@ -32,29 +31,22 @@ export default class QRScreen extends Component {
 
   componentDidMount() {
     this._requestCameraPermission();
-
-    if (this.props.navigation.state.params) {
-      if (this.props.navigation.state.params.logoImage) {
-        this.setState({ logoImage: this.props.navigation.state.params.logoImage })  
-      }
-    }
   }
 
-  // go to Home page
+  // route navigate to Home page
   toHomeScreen = (address) => {
     if (this.web3.isAddress(address)) {
       this.props.navigation.dispatch(navigate({ 
         routeName: 'MainDrawer', 
         params: {
-          token: address,
-          logoImage: this.state.logoImage
+          token: address
         } 
       }))  
     }
   }
 
 
-  // go to Login page
+  // route navigate to Login page
   goBack = () => { this.props.navigation.dispatch(navigate({ routeName: 'LoginScreen' } ))}
 
   // give "Granted" permisson to camera
@@ -70,6 +62,12 @@ export default class QRScreen extends Component {
     if (result.data !== this.state.lastScannedUrl) {
       LayoutAnimation.spring();
       this.setState({ lastScannedUrl: result.data });
+      if (this.web3.isAddress(result.data)) {
+        console.log('success', result.data)
+        this.toHomeScreen(result.data)  
+      } else {
+        console.log('faile', result.data)
+      }
     }
   };
 
@@ -97,69 +95,70 @@ export default class QRScreen extends Component {
                   }}
                 />}
 
-        {this._maybeRenderUrl()}
+        {/* this._maybeRenderUrl() */}
       </View>
     );
   }
 
-  // go to Home page
-  _handlePressUrl = () => {
-    if (this.web3.isAddress(this.state.lastScannedUrl)) {
-      Alert.alert(
-        'Are you sure?',
-        this.state.lastScannedUrl,
-        [
-          {
-            text: 'Yes',
-            onPress: () => this.toHomeScreen(this.state.lastScannedUrl)
-          },
-          { text: 'No', onPress: () => {} },
-        ],
-        { cancellable: false }
-      );
-    } else {
-      let msg = 'Please, enter contract address'
-      Alert.alert(
-        'This Contract is invalid.',
-        msg,
-        [
-          {
-            text: 'Ok',
-            onPress: () => {}
-          }
-        ],
-        { cancellable: false }
-      );
-    }
+  // route navigate to Home page
+  // _handlePressUrl = () => {
+  //   if (this.web3.isAddress(this.state.lastScannedUrl)) {
+    //   Alert.alert(
+    //     'Are you sure?',
+    //     this.state.lastScannedUrl,
+    //     [
+    //       {
+    //         text: 'Yes',
+    //         onPress: () => this.toHomeScreen(this.state.lastScannedUrl)
+    //       },
+    //       { text: 'No', onPress: () => {} },
+    //     ],
+    //     { cancellable: false }
+    //   );
+    // } else {
+    //   let msg = 'Please, enter contract address'
+    //   Alert.alert(
+    //     'This Contract is invalid.',
+    //     msg,
+    //     [
+    //       {
+    //         text: 'Ok',
+    //         onPress: () => {}
+    //       }
+    //     ],
+    //     { cancellable: false }
+    //   );
+    // }
+  // };
 
-  };
-
+  // action after user click cancel button in bottom
   _handlePressCancel = () => {
     this.setState({ lastScannedUrl: null });
   };
 
-  _maybeRenderUrl = () => {
-    if (!this.state.lastScannedUrl) {
-      return;
-    }
+  // show box in bottom after recognizing the QR code
+  // _maybeRenderUrl = () => {
+  //   if (!this.state.lastScannedUrl) {
+  //     return;
+  //   }
 
-    return (
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.url} onPress={this._handlePressUrl}>
-          <Text numberOfLines={1} style={styles.urlText}>
-            {this.state.lastScannedUrl}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={this._handlePressCancel}>
-          <Text style={styles.cancelButtonText}>
-            Cancel
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  //   // return (
+  //   //   <View style={styles.bottomBar}>
+  //   //     <TouchableOpacity style={styles.url} onPress={this._handlePressUrl}>
+  //   //       <Text numberOfLines={1} style={styles.urlText}>
+  //   //         {this.state.lastScannedUrl}
+  //   //       </Text>
+  //   //     </TouchableOpacity>
+  //   //     <TouchableOpacity
+  //   //       style={styles.cancelButton}
+  //   //       onPress={this._handlePressCancel}>
+  //   //       <Text style={styles.cancelButtonText}>
+  //   //         Cancel
+  //   //       </Text>
+  //   //     </TouchableOpacity>
+  //   //   </View>
+  //   // );
+  // };
 }
 
 const styles = StyleSheet.create({

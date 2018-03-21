@@ -19,7 +19,11 @@ import {
   StatusBar
 } from 'react-native'
 
-import Exponent, { Constants, ImagePicker, registerRootComponent } from 'expo';
+import { 
+    Asset, 
+    AppLoading } 
+from 'expo';
+
 import Web3 from 'web3'
 import { resetTo, setParamsAction, navigate } from '../navigators/navigationActions'
 import 'babel-preset-react-native-web3/globals';
@@ -35,9 +39,8 @@ class LoginScreen extends React.Component {
     super();
 
     this.state = {
-      tokenInput: '',
-      isLoaded: false,
-      image: ''
+      tokenInput: '',         // input value which users type QR code
+      isLoaded: false         // variable to check if app is loaded or not
     }
 
     this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
@@ -47,7 +50,7 @@ class LoginScreen extends React.Component {
     if (this.web3.isAddress(this.state.tokenInput)) {
       this.props.navigation.dispatch(navigate({ 
         routeName: 'MainDrawer', 
-        params: {token: this.state.tokenInput, logoImage: this.state.image} 
+        params: {token: this.state.tokenInput} 
       }))  
     } else {
       let msg = 'address is not correct'
@@ -68,71 +71,44 @@ class LoginScreen extends React.Component {
   }
 
   toQRScreen = () => {
-    console.log('to QR code: ', this.state)
     this.props.navigation.dispatch(navigate({ 
-      routeName: 'QRScreen',
-      params: {logoImage: this.state.image}
+      routeName: 'QRScreen'
     }))
   }
+
   changeToken = (text) => this.setState({tokenInput: text})
-  // pick image from phone
-  _pickImage = async () => {
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
+
+  // download and cache the images before app is loading
+  async _cacheResourcesAsync() {
+    const images = [
+      require('./../images/img/deveryscreen-svg.png'),
+      require('./../images/img/loading.gif'),
+      require("./../images/img/upload-icon.jpg")
+    ];
+
+    const cacheImages = images.map((image) => {
+      return Asset.fromModule(image).downloadAsync();
     });
+    return Promise.all(cacheImages)
 
-    this._handleImagePicked(pickerResult);
-  };
-
-  // save image uri in login component and home component
-  _handleImagePicked = async pickerResult => {
-    try {
-      this.setState({ isLoaded: true });
-
-      if (!pickerResult.cancelled) {
-        this.setState({ image: pickerResult.uri });
-      }
-    } catch (e) {
-      alert('Upload failed, sorry :(');
-      this.setState({ isLoaded: false });
-    } finally {
-    }
-  };
+  }
   
   render () {
-    let logoImage = [];
-
-    if (this.state.image != '') {
-      logoImage.push(
-        <Image source={{ uri: this.state.image }}  style={styles.logo} key="imageLogo" />
-      )
-    } 
-    // else {
-    //   logoImage.push(
-    //     <Image source={{ uri: this.state.image }}  style={styles.logo} key="imageLogo" />
-    //   )
-    // }
-
-    return (
+    if (!this.state.isLoaded) {
+      return (
+        <AppLoading
+          startAsync={this._cacheResourcesAsync}
+          onFinish={() => this.setState({ isLoaded: true })}
+          onError={console.warn}
+        />
+      );
+    } else {
+      return (
         <ImageBackground style={styles.imageContainer}>
           <View style={styles.logoContainer}>
-            { 
-              this.state.isLoaded
-                ? logoImage
-                : null
-            }
+            <Image source={deveryscreen}  style={styles.logo} key="imageLogo" />
           </View>
-          <TouchableOpacity 
-            style={styles.uploadContainer}
-            onPress={this._pickImage}>
-            <Image 
-              source={uploadImageIcon} 
-              style={styles.uploadIcon} />
-          </TouchableOpacity>
-          
-          <View style={styles.footer}>
-            
+          <View style={styles.footer}>          
             <Text h3 style={{ color: '#1b2979', textAlign: 'center', fontSize: 24 }}>Enter the code to check for authenticity!</Text>
             
             <TextInput
@@ -164,7 +140,8 @@ class LoginScreen extends React.Component {
             </View>
           </View>
         </ImageBackground>
-    )
+      )
+    }
   }
 }
 
