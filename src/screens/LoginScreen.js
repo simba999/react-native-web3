@@ -92,27 +92,59 @@ class LoginScreen extends React.Component {
     const cacheImages = images.map((image) => {
       return Asset.fromModule(image).downloadAsync();
     });
-    setTimeout(() => {
-      return Promise.all(cacheImages)  
-    }, 500)
     
+    return Promise.all(cacheImages);
+  }
 
+  _onLoad = () => {
+    // This only exists so the transition can be seen
+    // if loaded too quickly.
+    setTimeout(() => {
+      this.setState(() => ({ isLoaded: true }))
+    }, 3000)
   }
   
   render () {
     if (!this.state.isLoaded) {
+      // <AppLoading
+        //   startAsync={this._cacheResourcesAsync}
+        //   onFinish={() => this.setState({ isLoaded: true })}
+        //   onError={console.warn}
+        // />
       return (
-        <AppLoading
-          startAsync={this._cacheResourcesAsync}
-          onFinish={() => this.setState({ isLoaded: true })}
-          onError={console.warn}
-        />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'white'
+          }}>
+          <Image
+            source={loading}
+            resizeMode={'contain'}
+            style={[
+              {
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'white'
+              },
+              {
+                position: 'absolute',
+                resizeMode: 'contain'
+              }
+            ]}
+            onLoad={this._onLoad} />
+        </View>
       );
     } else {
       return (
         <ImageBackground style={styles.imageContainer}>
           <View style={styles.logoContainer}>
-            <Image source={deveryscreen}  style={styles.logo} key="imageLogo" />
+            <Image 
+              source={deveryscreen} 
+              style={styles.logo} 
+              key="imageLogo" />
           </View>
           <View style={styles.footer}>          
             <Text h3 style={{ color: '#1b2979', textAlign: 'center', fontSize: 24 }}>Enter the code to check for authenticity!</Text>

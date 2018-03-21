@@ -2,7 +2,7 @@
   "expo": {
     "sdkVersion": "24.0.0",
     "splash": {
-      "image": "./src/images/img/loading.gif"
+      "image": "./src/images/img/deveryscreen-svg.png"
     }
   }
 }
