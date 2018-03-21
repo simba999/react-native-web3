@@ -46,6 +46,7 @@ class LoginScreen extends React.Component {
     this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
   }
 
+  // route navigate to Home page
   toHomeScreen = () => {
     if (this.web3.isAddress(this.state.tokenInput)) {
       this.props.navigation.dispatch(navigate({ 
@@ -70,12 +71,14 @@ class LoginScreen extends React.Component {
     }
   }
 
+  // route navigate to QR scanner page
   toQRScreen = () => {
     this.props.navigation.dispatch(navigate({ 
       routeName: 'QRScreen'
     }))
   }
 
+  // update value when users type in code
   changeToken = (text) => this.setState({tokenInput: text})
 
   // download and cache the images before app is loading
@@ -89,7 +92,10 @@ class LoginScreen extends React.Component {
     const cacheImages = images.map((image) => {
       return Asset.fromModule(image).downloadAsync();
     });
-    return Promise.all(cacheImages)
+    setTimeout(() => {
+      return Promise.all(cacheImages)  
+    }, 500)
+    
 
   }
   
