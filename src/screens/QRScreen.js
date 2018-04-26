@@ -57,12 +57,39 @@ export default class QRScreen extends Component {
   _handleBarCodeRead = result => {
     if (result.data !== this.state.lastScannedUrl) {
       LayoutAnimation.spring();
+
       this.setState({ lastScannedUrl: result.data });
       if (this.web3.isAddress(result.data)) {
         console.log('success', result.data)
-        this.toHomeScreen(result.data)  
+        let msg = result.data; 
+        Alert.alert(
+          'This Contract is invalid.',
+          msg,
+          [
+            {
+              text: 'Ok',
+              onPress: () => {},
+              style: 'cancelBtn'
+            }
+          ],
+          { cancellable: false }
+        );
+        // this.toHomeScreen(result.data)  
       } else {
         console.log('faile', result.data)
+        let msg = result.data; 
+        Alert.alert(
+          'This Error is invalid.',
+          msg,
+          [
+            {
+              text: 'Ok',
+              onPress: () => {},
+              style: 'cancelBtn'
+            }
+          ],
+          { cancellable: false }
+        );
       }
     }
   };
