@@ -19,13 +19,18 @@ import {
   StatusBar
 } from 'react-native'
 
-import Exponent, { Constants, ImagePicker, registerRootComponent } from 'expo';
+import { 
+    Asset, 
+    AppLoading } 
+from 'expo';
+
 import Web3 from 'web3'
 import { resetTo, setParamsAction, navigate } from '../navigators/navigationActions'
 import 'babel-preset-react-native-web3/globals';
 
 const deveryscreen = require("./../images/img/deveryscreen-svg.png");
 const loading = require("./../images/img/loading.gif");
+const uploadImageIcon = require("./../images/img/upload-icon.jpg");
 
 
 class LoginScreen extends React.Component {
@@ -34,16 +39,20 @@ class LoginScreen extends React.Component {
     super();
 
     this.state = {
-      tokenInput: '',
-      isLoaded: true
+      tokenInput: '',         // input value which users type QR code
+      isLoaded: false         // variable to check if app is loaded or not
     }
 
     this.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.etherscan.io'));
   }
 
+  // route navigate to Home page
   toHomeScreen = () => {
     if (this.web3.isAddress(this.state.tokenInput)) {
-      this.props.navigation.dispatch(navigate({ routeName: 'MainDrawer', params: {token: this.state.tokenInput} }))  
+      this.props.navigation.dispatch(navigate({ 
+        routeName: 'MainDrawer', 
+        params: {token: this.state.tokenInput} 
+      }))  
     } else {
       let msg = 'address is not correct'
       if (this.state.tokenInput == '') msg = 'Please, enter contract address'
@@ -62,54 +71,82 @@ class LoginScreen extends React.Component {
     }
   }
 
-  toQRScreen = () => this.props.navigation.dispatch(resetTo({ routeName: 'QRScreen' }))
+  // route navigate to QR scanner page
+  toQRScreen = () => {
+    this.props.navigation.dispatch(navigate({ 
+      routeName: 'QRScreen'
+    }))
+  }
+
+  // update value when users type in code
   changeToken = (text) => this.setState({tokenInput: text})
-  // pick image from phone
-  _pickImage = async () => {
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
+
+  // download and cache the images before app is loading
+  async _cacheResourcesAsync() {
+    const images = [
+      require('./../images/img/deveryscreen-svg.png'),
+      require('./../images/img/loading.gif'),
+      require("./../images/img/upload-icon.jpg")
+    ];
+
+    const cacheImages = images.map((image) => {
+      return Asset.fromModule(image).downloadAsync();
     });
+    
+    return Promise.all(cacheImages);
+  }
 
-    this._handleImagePicked(pickerResult);
-  };
-
-  _handleImagePicked = async pickerResult => {
-      try {
-        this.setState({ isLoaded: true });
-
-        if (!pickerResult.cancelled) {
-          console.log('******* uri *********', pickerResult.uri)
-          this.setState({ image: pickerResult.uri });
-        }
-      } catch (e) {
-        console.log({ e });
-        alert('Upload failed, sorry :(');
-      } finally {
-        this.setState({ isLoaded: false });
-      }
-    };
+  _onLoad = () => {
+    // This only exists so the transition can be seen
+    // if loaded too quickly.
+    setTimeout(() => {
+      this.setState(() => ({ isLoaded: true }))
+    }, 5000)
+  }
   
   render () {
-    return (
+    if (!this.state.isLoaded) {
+      // <AppLoading
+        //   startAsync={this._cacheResourcesAsync}
+        //   onFinish={() => this.setState({ isLoaded: true })}
+        //   onError={console.warn}
+        // />
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'white'
+          }}>
+          <Image
+            source={loading}
+            resizeMode={'contain'}
+            style={[
+              {
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'white'
+              },
+              {
+                position: 'absolute',
+                resizeMode: 'contain'
+              }
+            ]}
+            onLoad={this._onLoad} />
+        </View>
+      );
+    } else {
+      return (
         <ImageBackground style={styles.imageContainer}>
           <View style={styles.logoContainer}>
-            { 
-              this.state.isLoaded
-                ? <Image source={deveryscreen} style={styles.logo} />
-                : null
-            }
+            <Image 
+              source={deveryscreen} 
+              style={styles.logo} 
+              key="imageLogo" />
           </View>
-          <View style={styles.uploadContainer}>
-            <Button
-              style={styles.uploadIcon}
-              title="upload image"
-              onPress={this._pickImage}
-              >
-            </Button>
-          </View>
-          <View style={styles.footer}>
-            
+          <View style={styles.footer}>          
             <Text h3 style={{ color: '#1b2979', textAlign: 'center', fontSize: 24 }}>Enter the code to check for authenticity!</Text>
             
             <TextInput
@@ -141,7 +178,8 @@ class LoginScreen extends React.Component {
             </View>
           </View>
         </ImageBackground>
-    )
+      )
+    }
   }
 }
 
@@ -221,18 +259,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   uploadIcon: {
-    borderRadius: 50,
-    height: 50,
-    width: 50,
+    // borderRadius: 50,
+    height: 40,
+    width: 40,
     position: "relative",
-    right: Platform.OS === "android" ? 10 : 20,
-    top: Platform.OS === "android" ? 25 : 20,
-    alignItems: 'flex-end'
+    alignItems: 'center',
+    overflow: 'visible'
   },
   uploadContainer: {
     position: "absolute",
-    top: 20,
-    right: 20
+    top: Platform.OS === "android" ? 30 : 30,
+    right: Platform.OS === "android" ? 20 : 20,
+    backgroundColor: 'white'
   }
 
 });
